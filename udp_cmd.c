@@ -76,7 +76,7 @@ void boot_program_page (uint32_t page, uint8_t *buf)
 void udp_cmd_get (unsigned char index)
 {
 	unsigned long page = 0;
-	struct IP_Header *ip;
+	//struct IP_Header *ip;
 	
 	if ((eth_buffer[UDP_DATA_START] == myip[0] &&
 	eth_buffer[UDP_DATA_START+1] == myip[1] &&
@@ -88,8 +88,8 @@ void udp_cmd_get (unsigned char index)
 			case 'P':
 				//Page Adresse aus UDP Packet auslesen
 				page = eth_buffer[UDP_DATA_START+8] << 8;
-				page = page + eth_buffer[UDP_DATA_START+7] << 8;  
-				page = page + eth_buffer[UDP_DATA_START+6] << 8;
+				page = page + (eth_buffer[UDP_DATA_START+7] << 8);
+				page = page + (eth_buffer[UDP_DATA_START+6] << 8);
 				page = page + eth_buffer[UDP_DATA_START+5];
 				
 				//überschreiben des Bootloaders verhindern
@@ -111,33 +111,32 @@ void udp_cmd_get (unsigned char index)
 				break;
 			
 			case 'E':
-				exit();
+				leave();
 		}
 	}
 }
 
 //----------------------------------------------------------------------------
 //Empfang der IP
-void exit (void)
+void leave(void)
 {
-	unsigned char temp;
-	//Hauptprogramm Startadresse
-	void (*start)( void ) = 0x0000;
+  unsigned char temp;
+  //Hauptprogramm Startadresse
+  void (*start)( void ) = 0x0000;
 	
-	//Ethernet Interrupt deaktivieren
-	ETH_INT_DISABLE;
+  //Ethernet Interrupt deaktivieren
+  ETH_INT_DISABLE;
 	
-	//Ethernet LEDs blinken aus
-	enc28j60_led_blink (0);
+  //Ethernet LEDs blinken aus
+  enc28j60_led_blink (0);
 	
-    // Interrupt Vektoren zurück setzen
-    temp = MCUCR;
-    MCUCR = temp | (1<<IVCE);
-    MCUCR = temp & ~(1<<IVSEL);
-
-	
-	//Start Adresse 0x0000
-	start();
+  // Interrupt Vektoren zurück setzen
+  temp = MCUCR;
+  MCUCR = temp | (1<<IVCE);
+  MCUCR = temp & ~(1<<IVSEL);
+  
+  //Start Adresse 0x0000
+  start();
 }
 
 

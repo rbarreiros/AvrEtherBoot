@@ -22,17 +22,17 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA. 
 ------------------------------------------------------------------------------*/
 #ifndef _UDP_CMD_CLIENT_H
-	#define _UDP_CMD_CLIENT_H
+#define _UDP_CMD_CLIENT_H
 
-	//#define UDP_CMD_DEBUG usart_write
-	#define UDP_CMD_DEBUG(...)
+//#define UDP_CMD_DEBUG usart_write
+#define UDP_CMD_DEBUG(...)
 
-	#define UDP_CMD_PORT_TX		7603
+#define UDP_CMD_PORT_TX		7603
 
-	unsigned char bootloader_lock;
+unsigned char bootloader_lock;
 
-	void udp_cmd_init(void);
-	void udp_cmd_get(unsigned char);
-	void exit (void);
-	
+void udp_cmd_init(void);
+void udp_cmd_get(unsigned char);
+void leave(void);
+
 #endif

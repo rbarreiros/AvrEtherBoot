@@ -30,7 +30,7 @@
 #include <avr/eeprom.h>
 #include <avr/io.h>
 
-#include "networkcard/enc28j60.h"
+#include "enc28j60.h"
 #include "udp_cmd.h"
 #include "config.h"
 

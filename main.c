@@ -24,7 +24,7 @@
 
 #include <avr/io.h>
 #include "config.h"
-#include "networkcard/enc28j60.h"
+#include "enc28j60.h"
 #include "stack.h"
 #include "udp_cmd.h"
 
@@ -32,37 +32,38 @@
 //Hier startet das Hauptprogramm
 int main(void)
 {  	
-    unsigned long a;
+  unsigned long a;
 	
-	//Interrupt Vektoren verbiegen
-	MCUCR = (1<<IVCE);
-	MCUCR = (1<<IVSEL);
-	
-	/* Clear WDRF in MCUSR */
-	MCUSR &= ~(1<<WDRF);
-	/* Write logical one to WDCE and WDE */
-	/* Keep old prescaler setting to prevent unintentional time-out */
-	WDTCSR |= (1<<WDCE) | (1<<WDE);
-	/* Turn off WDT */
-	WDTCSR = 0x00;
+  //Interrupt Vektoren verbiegen
+  MCUCR = (1<<IVCE);
+  MCUCR = (1<<IVSEL);
+  
+  /* Clear WDRF in MCUSR */
+  MCUSR &= ~(1<<WDRF);
+  /* Write logical one to WDCE and WDE */
+  /* Keep old prescaler setting to prevent unintentional time-out */
+  WDTCSR |= (1<<WDCE) | (1<<WDE);
+  /* Turn off WDT */
+  WDTCSR = 0x00;
+  
+  //Applikationen starten
+  stack_init();
+  enc28j60_led_blink (1);
+  
+  //Ethernetcard Interrupt enable
+  ETH_INT_ENABLE;
+  
+  //Globale Interrupts einschalten
+  sei(); 
+  
+  a = 5000000;
+  while(a--)
+  {
+    if(bootloader_lock) a = 5000000;
+    eth_get_data();
+  }
 
-	//Applikationen starten
-	stack_init();
-	enc28j60_led_blink (1);
-	
-	//Ethernetcard Interrupt enable
-	ETH_INT_ENABLE;
-	
-	//Globale Interrupts einschalten
-	sei(); 
-
-	a = 5000000;
-	while(a--)
-	{
-		if(bootloader_lock) a = 5000000;
-	    eth_get_data();
-    }
-	exit();
-	return(0);
+  leave();
+  return(0);
 }
 
